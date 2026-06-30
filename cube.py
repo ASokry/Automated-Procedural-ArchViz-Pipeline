@@ -19,6 +19,7 @@ cube_size.Set(cube_size.Get() * 2)
 cube_extent.Set(cube_extent.Get() * 2)
 cube_displaycolor.Set([(1.0, 0.0, 1.0)])
 
+# Save every single edited layer currently opened or held in memory
 stage.Save()
 # Print the stage as text so we can inspect the result:
 print(stage.ExportToString(addSourceFileComment=False))

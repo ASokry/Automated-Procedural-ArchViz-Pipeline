@@ -1,0 +1,20 @@
+#usda 1.0
+(
+    defaultPrim = "World"
+)
+
+def Xform "World"
+{
+    over "Chair_01" (
+        prepend references = @../props/chair.usda@</object_4>
+    )
+    {
+    }
+
+    over "Table_01" (
+        prepend payload = @../props/table.usda@</Camera>
+    )
+    {
+    }
+}
+
