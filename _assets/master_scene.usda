@@ -7,8 +7,28 @@ def Xform "World"
 {
     over "Chair_01" (
         prepend references = @../props/chair.usda@</object_4>
+        variants = {
+            string materialVariant = "metal"
+        }
+        prepend variantSets = "materialVariant"
     )
     {
+        double3 xformOp:translate = (15, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:transform", "xformOp:translate"]
+        variantSet "materialVariant" = {
+            "metal" {
+                custom string material:name = "BrushedSteel"
+
+            }
+            "plastic" {
+                custom string material:name = "GlossyRed"
+
+            }
+            "wood" {
+                custom string material:name = "RusticOak"
+
+            }
+        }
     }
 
     over "Table_01" (
