@@ -9,7 +9,7 @@
 def Xform "World"
 {
     over "Chair_01" (
-        prepend references = @C:\Users\antho\Documents\GitHub\Automated-Procedural-ArchViz-Pipeline\usd_assets\chair.usda@</object_4>
+        prepend references = @C:\Users\antho\Documents\GitHub\Automated-Procedural-ArchViz-Pipeline\usd_assets\chair.usda@
         variants = {
             string materialVariant = "metal"
         }
@@ -35,7 +35,7 @@ def Xform "World"
     }
 
     over "Table_01" (
-        prepend payload = @C:\Users\antho\Documents\GitHub\Automated-Procedural-ArchViz-Pipeline\usd_assets\table.usda@</Camera>
+        prepend payload = @C:\Users\antho\Documents\GitHub\Automated-Procedural-ArchViz-Pipeline\usd_assets\table.usda@
     )
     {
     }

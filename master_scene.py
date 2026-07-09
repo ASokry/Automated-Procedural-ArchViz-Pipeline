@@ -14,7 +14,7 @@ def create_mock_geometry():
     if not os.path.exists(geom_path):
         stage = Usd.Stage.CreateNew(geom_path)
         # Create a mock mesh root
-        chair_mesh = UsdGeom.Cube.Define(stage, "/object_4")
+        chair_mesh = UsdGeom.Cube.Define(stage)
         chair_mesh.GetSizeAttr().Set(10.0)
         stage.GetRootLayer().Save()
 
@@ -77,7 +77,7 @@ def assemble_master_scene():
     # Overriding target and applying external geometry reference
     chair_prim = stage.OverridePrim("/World/Chair_01")
     chair_path = os.path.join(usd_assets_dir, "chair.usda")
-    chair_prim.GetReferences().AddReference(chair_path, "/object_4")
+    chair_prim.GetReferences().AddReference(chair_path)
 
     # Use an Over to tweak the object position non-destructively
     xformable_chair = UsdGeom.Xformable(chair_prim)
@@ -117,7 +117,7 @@ def assemble_master_scene():
     # Asset is structure-ready but can be deferred
     table_prim = stage.OverridePrim("/World/Table_01")
     table_path = os.path.join(usd_assets_dir, "table.usda")
-    table_prim.GetPayloads().AddPayload(table_path, "/Camera")
+    table_prim.GetPayloads().AddPayload(table_path)
 
     # Memory Optimizations (Loading/Unloading)
     # Unload table to save memory

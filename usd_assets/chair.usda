@@ -1,6 +1,7 @@
 #usda 1.0
 (
     doc = "Blender v2.92.0"
+    defaultPrim = "object_4"
     metersPerUnit = 1
     upAxis = "Z"
 )
