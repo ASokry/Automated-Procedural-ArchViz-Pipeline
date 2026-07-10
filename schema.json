@@ -2,6 +2,7 @@
   "room_name": "Office_A",
   "assets": [
     {
+      "type": "reference",
       "id": "Desk_01",
       "usd_path": "../usd_assets/table.usda",
       "prim_path": "/World/Layout/Desk_01",
@@ -12,6 +13,7 @@
       }
     },
     {
+      "type": "reference",
       "id": "Chair_Task_01",
       "usd_path": "../usd_assets/chair.usda",
       "prim_path": "/World/Layout/Chair_Task_01",
@@ -22,6 +24,7 @@
       }
     },
     {
+      "type": "reference",
       "id": "Chair_Task_02",
       "usd_path": "../usd_assets/chair.usda",
       "prim_path": "/World/Layout/Chair_Task_02",
@@ -30,6 +33,25 @@
         "rotation": [0.0, -90.0, 0.0],
         "scale": [1.0, 1.0, 1.0]
       }
+    },
+    {
+      "type": "procedural_floor",
+      "id": "Main_Floor",
+      "prim_path": "/World/Layout/Architecture/Floor_01",
+      "width": 40.0,
+      "length": 30.0,
+      "tile_x": 4.0,
+      "tile_y": 3.0
+    },
+    {
+      "type": "procedural_wall",
+      "id": "North_Wall",
+      "prim_path": "/World/Layout/Architecture/Wall_North",
+      "start_point": [-20.0, -15.0],
+      "end_point": [20.0, -15.0],
+      "height": 12.0,
+      "tile_x": 2.0,
+      "tile_y": 1.0
     }
   ]
 }
