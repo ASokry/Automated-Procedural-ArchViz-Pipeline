@@ -3,7 +3,8 @@ import json
 from pxr import Usd, UsdGeom, Gf
 from procedural_generation import generate_floor_mesh
 from procedural_generation import generate_wall_mesh
-from camera_and_lighting import build_stage_with_cinematics
+from camera_and_lighting import parse_lights
+from camera_and_lighting import parse_cameras
 
 # Define environment variables/directories
 assets_dir = os.path.abspath("usd_assets")
@@ -26,7 +27,7 @@ def get_json():
     except json.JSONDecodeError:
         print(f"\n Error: '{file_name}' is not a valid JSON file.")
 
-def parse_json_to_usd(layout_data, output_usd_path):
+def parse_json_to_usd(schema_data, output_usd_path):
     """Parses JSON layout data and generates a USD scene."""
     # Initialize Stage and Set Metadata
     stage = Usd.Stage.CreateNew(output_usd_path)
@@ -38,10 +39,10 @@ def parse_json_to_usd(layout_data, output_usd_path):
 
     # Establish a layout scope prim
     UsdGeom.Scope.Define(stage, "/World/Layout")
-    print(f"Parsing Layout for: {layout_data['room_name']}")
+    print(f"Parsing Layout for: {schema_data['room_name']}")
 
     # Iterate through JSON layout assets
-    for asset in layout_data["assets"]:
+    for asset in schema_data["assets"]:
         asset_type = asset.get("type")
         prim_path = asset["prim_path"]
 
@@ -59,22 +60,13 @@ def parse_json_to_usd(layout_data, output_usd_path):
             transform_data = asset["transform"]
 
             # Translation (Vec3d)
-            xformable.AddTranslateOp().Set(Gf.Vec3d(transform_data["translation"]))
-            # t_data = transform_data["translation"]
-            # translate_op = xformable.AddTranslateOp()
-            # translate_op.Set(Gf.Vec3d(t_data[0], t_data[1], t_data[2]))
+            xformable.AddTranslateOp().Set(Gf.Vec3d(transform_data["translate"]))
 
             # Rotation XYZ order (Vec3f in degrees)
             xformable.AddRotateXYZOp().Set(Gf.Vec3f(transform_data["rotation"]))
-            # r_data = transform_data["rotation"]
-            # rotate_op = xformable.AddRotateXYZOp()
-            # rotate_op.Set(Gf.Vec3f(r_data[0], r_data[1], r_data[2]))
 
             # Scale (Vec3f)
             xformable.AddScaleOp().Set(Gf.Vec3f(transform_data["scale"]))
-            # s_data = transform_data["scale"]
-            # scale_op = xformable.AddScaleOp()
-            # scale_op.Set(Gf.Vec3f(s_data[0], s_data[1], s_data[2]))
 
         # Process Procedural Floors
         elif asset_type == "procedural_floor":
@@ -102,7 +94,9 @@ def parse_json_to_usd(layout_data, output_usd_path):
         else:
             print(f"Warning: Unknown asset payload type '{asset_type}' skipped.")
 
-    build_stage_with_cinematics(stage)
+    # Process lights and camera
+    parse_lights(schema_data, stage)
+    parse_cameras(schema_data, stage)
 
     # Save parsed layer
     stage.GetRootLayer().Save()

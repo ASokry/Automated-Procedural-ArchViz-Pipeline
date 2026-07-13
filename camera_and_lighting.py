@@ -1,83 +1,57 @@
-import os
 from pxr import UsdGeom, UsdLux, Gf
 
-def setup_lighting(stage, root_path):
-    """Creates a complete lighting rig with global sunlight and localized area lights."""
-    # Create an organizational xform folder for the lights
-    UsdGeom.Xform.Define(stage, root_path)
-
-    # DistantLight (Global Sunlight)
-    sun_path = f"{root_path}/Sunlight"
-    sun_light = UsdLux.DistantLight.Define(stage, sun_path)
-
-    # Illumination properties
-    sun_light.CreateIntensityAttr(1.5)
-    sun_light.CreateExposureAttr(1.0)
-    sun_light.CreateColorAttr(Gf.Vec3f(1.0, 0.95, 0.85)) # Warm sunlight tone
-    sun_light.CreateAngleAttr(1.0) # 1.0 degree angle creates realistic, slightly soft shadow edges
-
-    # Angle the sun via transforms
-    sun_xform = UsdGeom.Xformable(sun_light)
-    sun_xform.AddRotateXYZOp().Set(Gf.Vec3f(-45.0, 30.0, 0.0)) # Angled down from the sky
+def parse_lights(schema_data, stage):
+    """Processes the 'lights' key from JSON and instantiates UsdLux prims."""
+    if "lights" not in schema_data:
+        return
     
-    # Interior RectLight (Ceiling Panel Fixture)
-    fixture_path = f"{root_path}/Ceiling_Fixture_01"
-    rect_light = UsdLux.RectLight.Define(stage, fixture_path)
+    print("\nProcessing Environment Lighting...")
+    for light_data in schema_data["lights"]:
+        light_type = light_data.get("type")
+        prim_path = light_data["prim_path"]
+        print(f" -> Creating [{light_type.upper()}] at: {prim_path}")
 
-    # Shape and light behavior
-    rect_light.CreateWidthAttr(4.0)
-    rect_light.CreateHeightAttr(4.0)
-    rect_light.CreateIntensityAttr(20.0)
-    rect_light.CreateExposureAttr(2.0)
-    rect_light.CreateColorAttr(Gf.Vec3f(0.85, 0.9, 1.0)) # Cool corporate office tone
+        # Define light type
+        if light_type == "distant":
+            light_prim = UsdLux.DistantLight.Define(stage, prim_path)
+        elif light_type == "rect":
+            light_prim = UsdLux.RectLight.Define(stage, prim_path)
+            light_prim.CreateWidthAttr(float(light_data.get("width", 2.0)))
+            light_prim.CreateHeightAttr(float(light_data.get("height", 2.0)))
+        else:
+            print(f"Warning: Light type '{light_type}' not supported. Skipping.")
+            continue
 
-    # Position the ceiling fixture overhead
-    rect_xform = UsdGeom.Xformable(rect_light)
-    rect_xform.AddTranslateOp().Set(Gf.Vec3d(0.0, 14.0, 0.0)) # 14 units up on Y-axis
-    rect_xform.AddRotateXYZOp().Set(Gf.Vec3f(90.0, 0.0, 0.0)) # Point straight down down toward floor
+        # Set shared intensity and color values
+        light_prim.CreateIntensityAttr(float(light_data.get("intensity", 1.0)))
+        light_prim.CreateExposureAttr(float(light_data.get("exposure", 0.0)))
+        light_prim.CreateColorAttr(Gf.Vec3f(light_data["color_rgb"]))
+
+        # Apply transforms safely
+        xformable = UsdGeom.Xformable(light_prim)
+        if "translate" in light_data:
+            xformable.AddTranslateOp().Set(Gf.Vec3d(light_data["translate"]))
+        if "rotation" in light_data:
+            xformable.AddRotateXYZOp().Set(Gf.Vec3f(light_data["rotation"]))
+
+def parse_cameras(schema_data, stage):
+    """Processes the 'cameras' key from JSON and instantiates UsdGeom.Camera prims."""
+    if "cameras" not in schema_data:
+        return
     
-    print(" -> Appended UsdLux lighting array to stage.")
+    print("\nProcessing Cinematic Camera Array...")
+    for cam_data in schema_data["cameras"]:
+        prim_path = cam_data["prim_path"]
+        print(f" -> Setting Up Camera Rig: {prim_path}")
 
-def create_cinematic_camera(stage, prim_path, translation, rotation, focal_length=35.0):
-    """Procedurally builds a custom UsdGeom.Camera with optical presets."""
-    cam = UsdGeom.Camera.Define(stage, prim_path)
-
-    # Optics attributes
-    cam.CreateFocalLengthAttr(focal_length)
-    cam.CreateHorizontalApertureAttr(36.0) # Standard 35mm full-frame sensor width
-    cam.CreateVerticalApertureAttr(24.0)   # Standard 35mm full-frame sensor height
-    cam.CreateClippingRangeAttr(Gf.Vec2f(0.1, 1000.0)) # Don't clip near furniture or far walls
-    
-    # Precise transform overrides
-    xformable = UsdGeom.Xformable(cam)
-    xformable.AddTranslateOp().Set(Gf.Vec3d(translation))
-    xformable.AddRotateXYZOp().Set(Gf.Vec3f(rotation))
-
-    print(f" -> Programmed Camera Angle: {prim_path} ({focal_length}mm)")
-
-def build_stage_with_cinematics(stage):
-    UsdGeom.Scope.Define(stage, "/World/Cameras")
-
-    print("Executing Lighting and Camera Configuration Pipeline...")
-
-    setup_lighting(stage, "/World/Lights")
-
-    # Camera Angle 1: Wide Establishing Shot (wide lens looking across the office room)
-    create_cinematic_camera(
-        stage, 
-        prim_path="/World/Cameras/Cam_Establishing_Wide",
-        translation=(0.0, 6.5, 25.0),   # Lifted up and pushed back
-        rotation=(-12.0, 0.0, 0.0),     # Tilted slightly downward
-        focal_length=24.0               # Wide-angle lens
-    )
-
-    # Camera Angle 2: Close-up Detail Shot (cinematic lens focused tightly on desk space)
-    create_cinematic_camera(
-        stage, 
-        prim_path="/World/Cameras/Cam_Desk_Detail",
-        translation=(10.0, 4.2, -1.0), # Low, tight position near furniture coordinates
-        rotation=(-5.0, 135.0, 0.0),   # Angled across towards the chair layout
-        focal_length=65.0              # Narrow telephoto depth lens
-    )
-
-    stage.GetRootLayer().Save()
+        # Configure optical specs
+        cam = UsdGeom.Camera.Define(stage, prim_path)
+        cam.CreateFocalLengthAttr(float(cam_data.get("focal_length", 35.0)))
+        cam.CreateHorizontalApertureAttr(36.0) 
+        cam.CreateVerticalApertureAttr(24.0)
+        cam.CreateClippingRangeAttr(Gf.Vec2f(0.1, 1000.0))
+        
+        # Apply transforms safely
+        xformable = UsdGeom.Xformable(cam)
+        xformable.AddTranslateOp().Set(Gf.Vec3d(cam_data["translate"]))
+        xformable.AddRotateXYZOp().Set(Gf.Vec3f(cam_data["rotation"]))

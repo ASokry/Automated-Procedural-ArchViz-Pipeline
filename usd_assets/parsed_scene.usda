@@ -64,7 +64,31 @@ def Xform "World"
         }
     }
 
-    def Scope "Cameras"
+    def "Lights"
+    {
+        def DistantLight "Sun_Global"
+        {
+            color3f inputs:color = (1, 0.95, 0.85)
+            float inputs:exposure = 1
+            float inputs:intensity = 1.5
+            float3 xformOp:rotateXYZ = (-45, 30, 0)
+            uniform token[] xformOpOrder = ["xformOp:rotateXYZ"]
+        }
+
+        def RectLight "Ceiling_Fixture_01"
+        {
+            color3f inputs:color = (0.85, 0.9, 1)
+            float inputs:exposure = 2
+            float inputs:height = 4
+            float inputs:intensity = 20
+            float inputs:width = 4
+            float3 xformOp:rotateXYZ = (90, 0, 0)
+            double3 xformOp:translate = (0, 14, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+        }
+    }
+
+    def "Cameras"
     {
         def Camera "Cam_Establishing_Wide"
         {
@@ -85,31 +109,6 @@ def Xform "World"
             float verticalAperture = 24
             float3 xformOp:rotateXYZ = (-5, 135, 0)
             double3 xformOp:translate = (10, 4.2, -1)
-            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
-        }
-    }
-
-    def Xform "Lights"
-    {
-        def DistantLight "Sunlight"
-        {
-            float inputs:angle = 1
-            color3f inputs:color = (1, 0.95, 0.85)
-            float inputs:exposure = 1
-            float inputs:intensity = 1.5
-            float3 xformOp:rotateXYZ = (-45, 30, 0)
-            uniform token[] xformOpOrder = ["xformOp:rotateXYZ"]
-        }
-
-        def RectLight "Ceiling_Fixture_01"
-        {
-            color3f inputs:color = (0.85, 0.9, 1)
-            float inputs:exposure = 2
-            float inputs:height = 4
-            float inputs:intensity = 20
-            float inputs:width = 4
-            float3 xformOp:rotateXYZ = (90, 0, 0)
-            double3 xformOp:translate = (0, 14, 0)
             uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
         }
     }
