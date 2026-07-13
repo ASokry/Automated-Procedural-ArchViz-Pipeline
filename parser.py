@@ -3,6 +3,7 @@ import json
 from pxr import Usd, UsdGeom, Gf
 from procedural_generation import generate_floor_mesh
 from procedural_generation import generate_wall_mesh
+from camera_and_lighting import build_stage_with_cinematics
 
 # Define environment variables/directories
 assets_dir = os.path.abspath("usd_assets")
@@ -100,6 +101,8 @@ def parse_json_to_usd(layout_data, output_usd_path):
 
         else:
             print(f"Warning: Unknown asset payload type '{asset_type}' skipped.")
+
+    build_stage_with_cinematics(stage)
 
     # Save parsed layer
     stage.GetRootLayer().Save()
