@@ -1,11 +1,12 @@
 {
-  "room_name": "Office_A",
+  "room_name": "Room_A",
   "assets": [
     {
       "type": "reference",
       "id": "Desk_01",
       "usd_path": "../usd_assets/table.usda",
       "prim_path": "/World/Layout/Desk_01",
+      "variant": "metal",
       "transform": {
         "translate": [0.0, 0.0, 0.0],
         "rotation": [0.0, 0.0, 0.0],
@@ -14,9 +15,10 @@
     },
     {
       "type": "reference",
-      "id": "Chair_Task_01",
+      "id": "Chair_01",
       "usd_path": "../usd_assets/chair.usda",
-      "prim_path": "/World/Layout/Chair_Task_01",
+      "prim_path": "/World/Layout/Chair_01",
+      "variant": "wood",
       "transform": {
         "translate": [12.0, 0.0, -5.0],
         "rotation": [0.0, 45.0, 0.0],
@@ -25,9 +27,10 @@
     },
     {
       "type": "reference",
-      "id": "Chair_Task_02",
+      "id": "Chair_02",
       "usd_path": "../usd_assets/chair.usda",
-      "prim_path": "/World/Layout/Chair_Task_02",
+      "prim_path": "/World/Layout/Chair_02",
+      "variant": "wood",
       "transform": {
         "translate": [-12.0, 0.0, 5.0],
         "rotation": [0.0, -90.0, 0.0],

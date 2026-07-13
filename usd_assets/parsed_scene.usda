@@ -1,6 +1,9 @@
 #usda 1.0
 (
     defaultPrim = "World"
+    subLayers = [
+        @./materials.usda@
+    ]
     upAxis = "Y"
 )
 
@@ -10,32 +13,86 @@ def Xform "World"
     {
         over "Desk_01" (
             prepend references = @../usd_assets/table.usda@
+            variants = {
+                string materialVariant = "metal"
+            }
+            prepend variantSets = "materialVariant"
         )
         {
             float3 xformOp:rotateXYZ = (0, 0, 0)
             float3 xformOp:scale = (1, 1, 1)
             double3 xformOp:translate = (0, 0, 0)
             uniform token[] xformOpOrder = ["xformOp:transform", "xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+            variantSet "materialVariant" = {
+                "metal" {
+                    rel material:binding = </World/Materials/metal_mat>
+
+                }
+                "plastic" {
+                    rel material:binding = </World/Materials/plastic_mat>
+
+                }
+                "wood" {
+                    rel material:binding = </World/Materials/wood_mat>
+
+                }
+            }
         }
 
-        over "Chair_Task_01" (
+        over "Chair_01" (
             prepend references = @../usd_assets/chair.usda@
+            variants = {
+                string materialVariant = "wood"
+            }
+            prepend variantSets = "materialVariant"
         )
         {
             float3 xformOp:rotateXYZ = (0, 45, 0)
             float3 xformOp:scale = (1, 1, 1)
             double3 xformOp:translate = (12, 0, -5)
             uniform token[] xformOpOrder = ["xformOp:transform", "xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+            variantSet "materialVariant" = {
+                "metal" {
+                    rel material:binding = </World/Materials/metal_mat>
+
+                }
+                "plastic" {
+                    rel material:binding = </World/Materials/plastic_mat>
+
+                }
+                "wood" {
+                    rel material:binding = </World/Materials/wood_mat>
+
+                }
+            }
         }
 
-        over "Chair_Task_02" (
+        over "Chair_02" (
             prepend references = @../usd_assets/chair.usda@
+            variants = {
+                string materialVariant = "wood"
+            }
+            prepend variantSets = "materialVariant"
         )
         {
             float3 xformOp:rotateXYZ = (0, -90, 0)
             float3 xformOp:scale = (1, 1, 1)
             double3 xformOp:translate = (-12, 0, 5)
             uniform token[] xformOpOrder = ["xformOp:transform", "xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+            variantSet "materialVariant" = {
+                "metal" {
+                    rel material:binding = </World/Materials/metal_mat>
+
+                }
+                "plastic" {
+                    rel material:binding = </World/Materials/plastic_mat>
+
+                }
+                "wood" {
+                    rel material:binding = </World/Materials/wood_mat>
+
+                }
+            }
         }
 
         def "Architecture"

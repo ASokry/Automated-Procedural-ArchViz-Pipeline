@@ -1,10 +1,10 @@
 import os
 import json
 from pxr import Usd, UsdGeom, Gf
-from procedural_generation import generate_floor_mesh
-from procedural_generation import generate_wall_mesh
-from camera_and_lighting import parse_lights
-from camera_and_lighting import parse_cameras
+
+import lookdev
+from procedural_generation import generate_floor_mesh, generate_wall_mesh
+from camera_and_lighting import parse_lights, parse_cameras
 
 # Define environment variables/directories
 assets_dir = os.path.abspath("usd_assets")
@@ -41,6 +41,8 @@ def parse_json_to_usd(schema_data, output_usd_path):
     UsdGeom.Scope.Define(stage, "/World/Layout")
     print(f"Parsing Layout for: {schema_data['room_name']}")
 
+    lookdev.create_materials_sublayer(stage, assets_dir)
+
     # Iterate through JSON layout assets
     for asset in schema_data["assets"]:
         asset_type = asset.get("type")
@@ -58,15 +60,16 @@ def parse_json_to_usd(schema_data, output_usd_path):
             # Initialize the UsdGeom.Xformable schema to author transformations
             xformable = UsdGeom.Xformable(instanced_prim)
             transform_data = asset["transform"]
-
             # Translation (Vec3d)
             xformable.AddTranslateOp().Set(Gf.Vec3d(transform_data["translate"]))
-
             # Rotation XYZ order (Vec3f in degrees)
             xformable.AddRotateXYZOp().Set(Gf.Vec3f(transform_data["rotation"]))
-
             # Scale (Vec3f)
             xformable.AddScaleOp().Set(Gf.Vec3f(transform_data["scale"]))
+
+            # Attach the variant selection
+            chosen_variant = asset.get("variant", "metal")
+            lookdev.configure_asset_variants(stage, prim_path, chosen_variant)
 
         # Process Procedural Floors
         elif asset_type == "procedural_floor":
