@@ -1,36 +1,13 @@
-import os
-import json
 from pxr import Usd, UsdGeom, Gf
-
 import lookdev
 from procedural_generation import generate_floor_mesh, generate_wall_mesh
 from camera_and_lighting import parse_lights, parse_cameras
 
-# Define environment variables/directories
-assets_dir = os.path.abspath("usd_assets")
-scene_file_path = os.path.join(assets_dir, "parsed_scene.usda")
-os.makedirs(assets_dir, exist_ok=True)
 
-def get_json():
-    file_name = input("Enter JSON file name (schema.json): ")
-    json_data = None
-    try:
-        # Open json file
-        with open(file_name, 'r', encoding='utf-8') as file:
-            json_data = json.load(file)
-            
-        return json_data
-
-    except FileNotFoundError:
-        print(f"\n Error: The file '{file_name}' was not found.")
-        
-    except json.JSONDecodeError:
-        print(f"\n Error: '{file_name}' is not a valid JSON file.")
-
-def parse_json_to_usd(schema_data, output_usd_path):
+def parse_json_to_usd(schema_data, asset_dir, output_path):
     """Parses JSON layout data and generates a USD scene."""
     # Initialize Stage and Set Metadata
-    stage = Usd.Stage.CreateNew(output_usd_path)
+    stage = Usd.Stage.CreateNew(output_path)
     UsdGeom.SetStageUpAxis(stage, UsdGeom.Tokens.y)
 
     # Define primary scene root
@@ -41,7 +18,7 @@ def parse_json_to_usd(schema_data, output_usd_path):
     UsdGeom.Scope.Define(stage, "/World/Layout")
     print(f"Parsing Layout for: {schema_data['room_name']}")
 
-    lookdev.create_materials_sublayer(stage, assets_dir)
+    lookdev.create_materials_sublayer(stage, asset_dir)
 
     # Iterate through JSON layout assets
     for asset in schema_data["assets"]:
@@ -103,8 +80,7 @@ def parse_json_to_usd(schema_data, output_usd_path):
 
     # Save parsed layer
     stage.GetRootLayer().Save()
-    print(f"\nAssembly complete! Scene file written to: {output_usd_path}")
+    print(f"\nAssembly complete! Scene file written to: {output_path}")
 
 if __name__ == "__main__":
-    json_data = get_json()
     parse_json_to_usd(json_data, scene_file_path)
