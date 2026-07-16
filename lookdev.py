@@ -39,7 +39,7 @@ def create_materials_sublayer(stage, output_path):
         
     mat_stage.GetRootLayer().Save()
 
-    # Non-destructively sublayer materials into our master scene context
+    # Non-destructively sublayer materials into master scene context
     stage.GetRootLayer().subLayerPaths.append("./materials.usda")
     print(" -> Materials sublayer created.")
 

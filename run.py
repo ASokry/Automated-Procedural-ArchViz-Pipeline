@@ -37,9 +37,12 @@ def main():
     parse_json_to_usd(json_input, asset_dir, scene_path)
 
     # Trigger headless render
-    output_png = os.path.abspath("renders/render_output.png")
-    os.makedirs(asset_dir, exist_ok=True)
-    render_scene_camera(scene_path, "/World/Cameras/Cam_Establishing_Wide", output_png)
+    output_path = os.path.abspath("renders/render_output.png")
+    if os.path.exists(output_path):
+        os.remove(output_path)
+    render_dir = os.path.dirname(output_path)
+    os.makedirs(render_dir, exist_ok=True)
+    render_scene_camera(scene_path, "/World/Cameras/Cam_Establishing_Wide", output_path)
 
     print("\n[SUCCESS] Pipeline executed completely.")
 

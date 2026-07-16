@@ -3,7 +3,6 @@ import lookdev
 from procedural_generation import generate_floor_mesh, generate_wall_mesh
 from camera_and_lighting import parse_lights, parse_cameras
 
-
 def parse_json_to_usd(schema_data, asset_dir, output_path):
     """Parses JSON layout data and generates a USD scene."""
     # Initialize Stage and Set Metadata
