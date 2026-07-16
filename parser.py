@@ -81,6 +81,3 @@ def parse_json_to_usd(schema_data, asset_dir, output_path):
     # Save parsed layer
     stage.GetRootLayer().Save()
     print(f"\nAssembly complete! Scene file written to: {output_path}")
-
-if __name__ == "__main__":
-    parse_json_to_usd(json_data, scene_file_path)
