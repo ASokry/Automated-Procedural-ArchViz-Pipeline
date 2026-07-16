@@ -22,5 +22,5 @@ def render_scene_camera(usd_path, camera_path, output_path):
         # Run command via system shell
         subprocess.run(command, check=True, shell=is_windows)
         print(f" -> Render successful! Image written to: {output_path}")
-    except subprocess.CalledProcessError as e:
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
         print(f"Error executing usdrecord: {e}. Ensure OpenUSD binaries are in your system PATH.")
